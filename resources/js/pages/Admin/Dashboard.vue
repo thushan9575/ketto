@@ -1,62 +1,59 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
+import SidebarLayout from '@/components/AppSidebar.vue';
 
-// Logout
-const logout = () => {
-    router.post('/logout');
-};
+defineOptions({
+  layout: SidebarLayout,
+});
 
-// Go to User Dashboard
-const goUserDashboard = () => {
-    router.get('/dashboard'); // matches your existing route
-};
+const logout = () => router.post('/logout');
+const goUserDashboard = () => router.get('/dashboard');
 </script>
 
 <template>
-  <div class="p-6">
-    
-    <!-- Top Actions -->
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold text-red-600">Admin Dashboard</h1>
+  <div>
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
+        <p class="text-gray-500">Welcome, {{ $page.props.auth.user.name }}</p>
+      </div>
 
       <div class="flex gap-3">
-        <!-- User Dashboard Button -->
         <button 
           @click="goUserDashboard"
-          class="px-4 py-2 bg-blue-500 text-white rounded"
+          class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
         >
           User Dashboard
         </button>
 
-        <!-- Logout Button -->
         <button 
           @click="logout"
-          class="px-4 py-2 bg-red-500 text-white rounded"
+          class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
         >
           Logout
         </button>
       </div>
     </div>
 
-    <p>Welcome, {{ $page.props.auth.user.name }} </p>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-    <!-- Admin Stats -->
-    <div class="grid grid-cols-3 gap-6 mt-6">
-      <div class="p-4 bg-white shadow rounded">
-        <h2 class="font-semibold">Total Users</h2>
-        <p>---</p>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-gray-500 text-sm">Total Users</h2>
+        <p class="text-2xl font-bold mt-2">120</p>
       </div>
 
-      <div class="p-4 bg-white shadow rounded">
-        <h2 class="font-semibold">Total Bookings</h2>
-        <p>---</p>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-gray-500 text-sm">Total Bookings</h2>
+        <p class="text-2xl font-bold mt-2">75</p>
       </div>
 
-      <div class="p-4 bg-white shadow rounded">
-        <h2 class="font-semibold">Revenue</h2>
-        <p>---</p>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h2 class="text-gray-500 text-sm">Revenue</h2>
+        <p class="text-2xl font-bold mt-2">Rs. 250,000</p>
       </div>
+
     </div>
-
   </div>
 </template>
