@@ -20,4 +20,9 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::inertia('/admin/rooms', 'Admin/Rooms/Index')->name('admin.rooms.index');
 });
 
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    Route::inertia('admin/dashboard', 'Admin/Dashboard')->name('admin.dashboard');
+    Route::inertia('/admin/room-types', 'Admin/RoomTypes/Index')->name('admin.roomtypes.index');
+});
+
 require __DIR__.'/settings.php';

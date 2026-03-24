@@ -1,4 +1,6 @@
 <?php
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 use App\Rooms\Entities\Models\Room;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,16 +18,18 @@ test('lists all rooms', function () {
 
 test('creates a new room', function () {
 
+    Storage::fake('public'); // fake storage
+
     $payload = [
         'room_title' => 'Deluxe Room',
-        'image' => 'img.jpg',
+        'image' => UploadedFile::fake()->image('room.jpg'), // ✅ FIX
         'description' => 'Nice room',
         'price' => 2500,
         'wifi' => true,
         'room_type' => 'double'
     ];
 
-    $this->postJson('/api/rooms', $payload)
+    $this->post('/api/rooms', $payload) // ✅ CHANGE HERE (NOT postJson)
         ->assertStatus(201)
         ->assertJsonFragment(['room_title' => 'Deluxe Room']);
 
@@ -34,7 +38,6 @@ test('creates a new room', function () {
         'price' => 2500
     ]);
 });
-
 
 
 test('updates a room', function () {

@@ -76,7 +76,7 @@
   import SidebarLayout from '@/components/AppSidebar.vue'
   import { ref, onMounted } from 'vue'
   import axios from 'axios'
-  import AddRoomForm from './AddRoomForm.vue'
+  import AddRoomForm from './AddRoomform.vue'
   import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
   
   defineOptions({
