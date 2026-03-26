@@ -1,187 +1,172 @@
 <template>
-    <div class="bg-white p-6 rounded shadow">
-      <h2 class="text-xl font-semibold mb-4 text-gray-700">
-        {{ formMode === 'create' ? 'Add Room' : 'Edit Room' }}
-      </h2>
-  
-      <div class="flex flex-col gap-4">
-  
-        <!-- Room Title -->
-        <div>
-          <label class="block mb-1 font-medium text-gray-600">Room Title</label>
-          <input
-            v-model="form.room_title"
-            type="text"
-            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-          />
-        </div>
-  
-        <!-- Image Upload -->
-        <div>
-          <label class="block mb-1 font-medium text-gray-600">Room Image</label>
-          <input type="file" @change="handleFile" class="w-full" />
-          <div v-if="previewImage" class="mt-2">
-            <img :src="previewImage" class="h-32 w-32 object-cover rounded border" />
-          </div>
-        </div>
-  
-        <!-- Room Type -->
-        <div>
-          <label class="block mb-1 font-medium text-gray-600">Room Type</label>
-          <input
-            v-model="form.room_type"
-            type="text"
-            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-          />
-        </div>
-  
-        <!-- Description -->
-        <div>
-          <label class="block mb-1 font-medium text-gray-600">Description</label>
-          <textarea
-            v-model="form.description"
-            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-          ></textarea>
-        </div>
-  
-        <!-- Price -->
-        <div>
-          <label class="block mb-1 font-medium text-gray-600">Price</label>
-          <input
-            v-model.number="form.price"
-            type="number"
-            class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-          />
-        </div>
-  
-        <!-- Wifi -->
-        <div class="flex items-center gap-2">
-          <input type="checkbox" v-model="form.wifi" id="wifi" class="accent-blue-500" />
-          <label for="wifi" class="text-gray-600">Wifi Available</label>
-        </div>
-  
-        <!-- Buttons -->
-        <div class="flex gap-2 justify-end mt-4">
-          <button
-            @click="save"
-            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            :disabled="loading"
-          >
-            {{ loading ? 'Saving...' : 'Save' }}
-          </button>
-  
-          <button
-            @click="resetForm"
-            class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-          >
-            Reset
-          </button>
-        </div>
-  
+  <div class="bg-white p-6 rounded shadow">
+    <h2 class="text-xl font-semibold mb-4 text-gray-700">
+      {{ formMode === 'create' ? 'Add Room' : 'Edit Room' }}
+    </h2>
+
+    <div class="flex flex-col gap-4">
+
+      <!-- Title -->
+      <div>
+        <label>Room Title</label>
+        <input v-model="form.room_title" class="w-full border px-3 py-2 rounded" />
       </div>
+
+      <!-- Image -->
+      <div>
+        <label>Image</label>
+        <input type="file" @change="handleFile" />
+        <img v-if="previewImage" :src="previewImage" class="h-20 mt-2" />
+      </div>
+
+      <!-- Room Type -->
+      <div>
+        <label>Room Type</label>
+        <select v-model="form.room_type_id" class="w-full border px-3 py-2 rounded">
+          <option value="">Select Room Type</option>
+          <option v-for="type in roomTypes" :key="type.id" :value="type.id">
+            {{ type.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label>Description</label>
+        <textarea v-model="form.description" class="w-full border px-3 py-2 rounded"></textarea>
+      </div>
+
+      <!-- Price -->
+      <div>
+        <label>Price</label>
+        <input type="number" v-model="form.price" class="w-full border px-3 py-2 rounded" />
+      </div>
+
+      <!-- Wifi -->
+      <div class="flex gap-2">
+        <input type="checkbox" v-model="form.wifi" />
+        <label>Wifi</label>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex gap-2">
+        <button @click="save" class="bg-blue-600 text-white px-4 py-2 rounded">
+          Save
+        </button>
+        <button @click="resetForm" class="bg-gray-300 px-4 py-2 rounded">
+          Reset
+        </button>
+      </div>
+
     </div>
-  </template>
-  
-  <script setup lang="ts">
-  import { ref, watch } from 'vue'
-  import axios from 'axios'
-  
-  interface Room {
-    id?: string
-    room_title: string
-    image?: string | null
-    room_type: string
-    description: string
-    price: number
-    wifi: boolean
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue'
+import axios from 'axios'
+
+interface Room {
+  id?: string
+  room_title: string
+  image?: string | null
+  room_type_id: string
+  description: string
+  price: number
+  wifi: boolean
+}
+
+interface RoomType {
+  id: string
+  name: string
+}
+
+const props = defineProps<{ initial?: any }>()
+const emit = defineEmits(['saved'])
+
+const formMode = ref<'create' | 'edit'>('create')
+const roomTypes = ref<RoomType[]>([])
+const file = ref<File | null>(null)
+const previewImage = ref<string | null>(null)
+
+const form = ref<Room>({
+  room_title: '',
+  image: null,
+  room_type_id: '',
+  description: '',
+  price: 0,
+  wifi: false,
+})
+
+watch(
+  () => props.initial,
+  (val) => {
+    if (val) {
+      form.value = {
+        ...val,
+        // ✅ handle both API formats
+        room_type_id: val.room_type_id || val.room_type?.id || ''
+      }
+      formMode.value = 'edit'
+      previewImage.value = val.image ? `/storage/${val.image}` : null
+    } else {
+      resetForm()
+    }
+  },
+  { immediate: true }
+)
+
+// Fetch room types
+async function fetchRoomTypes() {
+  const res = await axios.get('/api/room-types')
+  roomTypes.value = res.data
+}
+
+onMounted(fetchRoomTypes)
+
+// File handler
+function handleFile(e: Event) {
+  const target = e.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    file.value = target.files[0]
+    previewImage.value = URL.createObjectURL(file.value)
   }
-  
-  const props = defineProps<{ initial?: Room | null }>()
-  const emit = defineEmits<{ (e: 'saved', room: Room): void }>()
-  
-  const formMode = ref<'create' | 'edit'>('create')
-  const loading = ref(false)
-  const file = ref<File | null>(null)
-  const previewImage = ref<string | null>(null)
-  
-  const form = ref<Room>({
+}
+
+// Save
+async function save() {
+  const formData = new FormData()
+
+  formData.append('room_title', form.value.room_title)
+  formData.append('room_type_id', form.value.room_type_id)
+  formData.append('description', form.value.description)
+  formData.append('price', String(form.value.price))
+  formData.append('wifi', form.value.wifi ? '1' : '0')
+
+  if (file.value) formData.append('image', file.value)
+
+  if (formMode.value === 'create') {
+    await axios.post('/api/rooms', formData)
+  } else {
+    await axios.post(`/api/rooms/${form.value.id}?_method=PUT`, formData)
+  }
+
+  emit('saved')
+  resetForm()
+}
+
+// Reset
+function resetForm() {
+  form.value = {
     room_title: '',
     image: null,
-    room_type: '',
+    room_type_id: '',
     description: '',
     price: 0,
     wifi: false,
-  })
-  
-  // Watch initial for edit mode
-  watch(
-    () => props.initial,
-    (val) => {
-      if (val) {
-        form.value = { ...val }
-        formMode.value = 'edit'
-        previewImage.value = val.image ? `/storage/${val.image}` : null
-        file.value = null
-      } else {
-        resetForm()
-      }
-    },
-    { immediate: true }
-  )
-  
-  // Handle file input
-  function handleFile(event: Event) {
-    const target = event.target as HTMLInputElement
-    if (target.files && target.files[0]) {
-      file.value = target.files[0]
-      previewImage.value = URL.createObjectURL(file.value)
-    }
   }
-  
-  // Save room
-  async function save() {
-    loading.value = true
-    try {
-      const formData = new FormData()
-      formData.append('room_title', form.value.room_title)
-      formData.append('room_type', form.value.room_type)
-      formData.append('description', form.value.description)
-      formData.append('price', String(form.value.price))
-      formData.append('wifi', form.value.wifi ? '1' : '0')
-      if (file.value) formData.append('image', file.value)
-  
-      let response
-      if (formMode.value === 'create') {
-        response = await axios.post('/api/rooms', formData)
-      } else {
-        response = await axios.post(
-          `/api/rooms/${form.value.id}?_method=PUT`,
-          formData
-        )
-      }
-  
-      emit('saved', response.data)
-      resetForm()
-    } catch (err) {
-      console.error(err)
-      alert('Failed to save room')
-    } finally {
-      loading.value = false
-    }
-  }
-  
-  // Reset form
-  function resetForm() {
-    form.value = {
-      room_title: '',
-      image: null,
-      room_type: '',
-      description: '',
-      price: 0,
-      wifi: false,
-    }
-    previewImage.value = null
-    file.value = null
-    formMode.value = 'create'
-  }
-  </script>
+  previewImage.value = null
+  file.value = null
+  formMode.value = 'create'
+}
+</script>

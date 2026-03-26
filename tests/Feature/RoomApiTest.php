@@ -1,6 +1,8 @@
 <?php
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use App\RoomTypes\Entities\Models\RoomType;
+
 
 use App\Rooms\Entities\Models\Room;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,27 +20,33 @@ test('lists all rooms', function () {
 
 test('creates a new room', function () {
 
-    Storage::fake('public'); // fake storage
+    Storage::fake('public');
+
+    // ✅ CREATE VALID ROOM TYPE FIRST
+    $roomType = RoomType::factory()->create();
 
     $payload = [
         'room_title' => 'Deluxe Room',
-        'image' => UploadedFile::fake()->image('room.jpg'), // ✅ FIX
+        'image' => UploadedFile::fake()->image('room.jpg'),
         'description' => 'Nice room',
         'price' => 2500,
         'wifi' => true,
-        'room_type' => 'double'
+        'room_type_id' => $roomType->id // ✅ FIX
     ];
 
-    $this->post('/api/rooms', $payload) // ✅ CHANGE HERE (NOT postJson)
+    $this->post('/api/rooms', $payload)
         ->assertStatus(201)
-        ->assertJsonFragment(['room_title' => 'Deluxe Room']);
+        ->assertJsonFragment([
+            'room_title' => 'Deluxe Room'
+        ]);
 
     $this->assertDatabaseHas('rooms', [
         'room_title' => 'Deluxe Room',
         'price' => 2500
     ]);
-});
 
+   
+});
 
 test('updates a room', function () {
 
@@ -76,7 +84,7 @@ test('validates required fields', function () {
             'room_title',
             'description',
             'price',
-            'room_type'
+            'room_type_id'
         ]);
 });
 
@@ -86,7 +94,7 @@ test('validates price must be numeric', function () {
         'room_title' => 'Test',
         'description' => 'Test desc',
         'price' => 'invalid',
-        'room_type' => 'single'
+        'room_type_id' => 1
     ])
         ->assertStatus(422)
         ->assertJsonValidationErrors(['price']);

@@ -123,7 +123,7 @@
     
     <div style="max-width:1200px;margin:auto">
     
-    <h2 style="text-align:center;margin-bottom:40px">Our Rooms</h2>
+    <h2 style="text-align:center;margin-bottom:40px"> Rooms</h2>
     
     <div style="display:flex;gap:30px;flex-wrap:wrap;justify-content:center">
     

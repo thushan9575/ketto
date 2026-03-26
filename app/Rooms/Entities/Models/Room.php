@@ -15,7 +15,7 @@ class Room extends Model
         'description',
         'price',
         'wifi',
-        'room_type'
+        'room_type_id' 
     ];
 
     protected static function newFactory()
