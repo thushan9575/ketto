@@ -130,7 +130,7 @@ const sendMessage = () => alert('Message sent!')
       <!-- ROOMS -->
       <section class="py-16 bg-gray-50">
         <div class="max-w-6xl mx-auto">
-          <h2 class="text-center text-3xl mb-10">Our Rooms</h2>
+          <h2 class="text-center text-3xl mb-10">Ou Rooms</h2>
           <div class="flex flex-wrap gap-6 justify-center">
             <div v-for="room in rooms" :key="room.id" class="w-72 bg-white rounded shadow overflow-hidden">
               <img :src="room.image" class="w-full h-44 object-cover" />

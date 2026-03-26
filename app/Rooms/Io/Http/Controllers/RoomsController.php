@@ -24,7 +24,7 @@ class RoomsController extends Controller
             'description' => 'required',
             'price' => 'required|numeric',
             'wifi' => 'boolean',
-            'room_type' => 'required'
+            'room_type_id' => 'required|exists:room_types,id' 
         ]);
     
         // ✅ STORE IMAGE PROPERLY
@@ -44,7 +44,7 @@ class RoomsController extends Controller
             'description' => 'sometimes|required',
             'price' => 'sometimes|numeric',
             'wifi' => 'boolean',
-            'room_type' => 'sometimes|required'
+            'room_type_id' => 'sometimes|required|exists:room_types,id' 
         ]);
 
         return response()->json($updateRoom->execute($room, $data));
