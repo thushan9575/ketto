@@ -61,6 +61,11 @@ async function fetchRoomsData() {
   }
 }
 
+// ✅ Booking redirect
+const goToBooking = (roomId: number) => {
+  router.visit(`/booking?room_id=${roomId}`)
+}
+
 onMounted(() => {
   fetchRoomsData()   // 👈 ADD THIS ONLY
   setTimeout(() => (loading.value = false), 1500)
@@ -140,50 +145,46 @@ const sendMessage = () => alert('Message sent!')
 
       <!-- ROOMS -->
       <section class="py-16 bg-gray-50">
-  <div class="max-w-6xl mx-auto">
-    <h2 class="text-center text-3xl mb-10">Our Rooms</h2>
+        <div class="max-w-6xl mx-auto">
+          <h2 class="text-center text-3xl mb-10">Our Rooms</h2>
 
-    <!-- Group by Room Type -->
-    <div v-for="type in roomTypes" :key="type.id" class="mb-10">
+          <div v-for="type in roomTypes" :key="type.id" class="mb-10">
+            <h3 class="text-xl text-center mb-4">{{ type.name }}</h3>
 
-      <!-- Room Type Title -->
-      <h3 class="text-xl font-semibold mb-4 text-gray-700 text-center">
-        {{ type.name }}
-      </h3>
+            <div class="flex flex-wrap gap-6 justify-center">
 
-      <!-- Rooms under this type -->
-      <div class="flex flex-wrap gap-6 justify-center">
+              <div
+                v-for="room in rooms.filter(r => r.room_type_id === type.id)"
+                :key="room.id"
+                class="w-72 bg-white rounded shadow"
+              >
+                <img
+                  v-if="room.image"
+                  :src="`/storage/${room.image}`"
+                  class="h-44 w-full object-cover"
+                />
 
-        <div
-          v-for="room in rooms.filter(r => r.room_type_id === type.id)"
-          :key="room.id"
-          class="w-72 bg-white rounded shadow overflow-hidden"
-        >
-          <img
-            v-if="room.image"
-            :src="`/storage/${room.image}`"
-            class="w-full h-44 object-cover"
-          />
+                <div class="p-4">
+                  <h3>{{ room.room_title }}</h3>
+                  <p class="text-sm text-gray-500">{{ room.description }}</p>
+                  <p class="font-bold mt-2">Rs. {{ room.price }}</p>
 
-          <div class="p-4">
-            <h3 class="font-semibold">{{ room.room_title }}</h3>
+                  <!-- ✅ BOOK BUTTON -->
+                  <button
+                    @click="goToBooking(room.id)"
+                    class="mt-3 w-full bg-black text-white py-2 rounded"
+                  >
+                    Book Now
+                  </button>
+                </div>
 
-            <p class="text-gray-500 text-sm">
-              {{ room.description }}
-            </p>
+              </div>
 
-            <p class="mt-2 font-bold text-blue-600">
-              Rs. {{ room.price }}
-            </p>
+            </div>
           </div>
 
         </div>
-
-      </div>
-    </div>
-
-  </div>
-</section>
+      </section>
 
       <!-- GALLERY -->
       <section class="py-16 max-w-6xl mx-auto">

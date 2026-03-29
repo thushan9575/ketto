@@ -19,9 +19,9 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->boolean('wifi')->default(true);
             $table->foreignId('room_type_id')
-                  ->nullable()
-                  ->constrained('room_types') // references id on room_types
-                  ->nullOnDelete();           // set null if the type is deleted
+            ->nullable()
+            ->constrained('room_types')
+            ->cascadeOnDelete();         // set null if the type is deleted
             $table->timestamps();
         });
     }
