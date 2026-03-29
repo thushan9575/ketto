@@ -25,4 +25,8 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::inertia('/admin/room-types', 'Admin/RoomTypes/Index')->name('admin.roomtypes.index');
 });
 
+Route::get('/booking', function () {
+    return Inertia::render('BookingPage');
+});
+
 require __DIR__.'/settings.php';
