@@ -3,7 +3,8 @@ namespace App\Rooms\Entities\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Rooms\IO\Database\Factories\RoomFactory;
+use App\Rooms\Io\Database\Factories\RoomFactory;
+
 
 class Room extends Model
 {

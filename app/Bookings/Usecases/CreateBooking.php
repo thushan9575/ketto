@@ -1,5 +1,5 @@
 <?php
-namespace App\Bookings\UseCases;
+namespace App\Bookings\Usecases;
 
 use App\Bookings\Entities\Models\Booking;
 
