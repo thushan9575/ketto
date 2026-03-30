@@ -36,6 +36,11 @@ const mainNavItems: NavItem[] = [
     href: '/admin/room-types',
     icon: LayoutGrid, 
   },
+  {
+    title: 'bookings',
+    href: '/admin/bookings',
+    icon: LayoutGrid, 
+  },
 ];
 
 const footerNavItems: NavItem[] = [

@@ -22,3 +22,7 @@ Route::post('/bookings', [BookingController::class, 'store']);
 
 // ✅ ADD THIS (VERY IMPORTANT)
 Route::get('/rooms/{room}/booked-dates', [BookingController::class, 'bookedDates']);
+
+// ✅ NEW (Admin)
+Route::get('/bookings', [BookingController::class, 'index']);
+Route::delete('/bookings/{booking}', [BookingController::class, 'destroy']);

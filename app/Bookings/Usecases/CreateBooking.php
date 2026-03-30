@@ -7,20 +7,15 @@ use Illuminate\Validation\ValidationException;
 
 
 
-
 class CreateBooking
 {
     public function execute(array $data)
     {
-        // ❌ Check overlapping bookings
+        // ✅ FIXED overlap logic (NO wrong dates)
         $exists = Booking::where('room_id', $data['room_id'])
             ->where(function ($q) use ($data) {
-                $q->whereBetween('arrival', [$data['arrival'], $data['departure']])
-                  ->orWhereBetween('departure', [$data['arrival'], $data['departure']])
-                  ->orWhere(function ($q2) use ($data) {
-                      $q2->where('arrival', '<=', $data['arrival'])
-                         ->where('departure', '>=', $data['departure']);
-                  });
+                $q->where('arrival', '<', $data['departure'])
+                  ->where('departure', '>', $data['arrival']);
             })
             ->exists();
 

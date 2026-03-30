@@ -26,4 +26,21 @@ class BookingController extends Controller
 
         return response()->json($bookings);
     }
+
+    // ✅ NEW: GET ALL BOOKINGS (Admin)
+    public function index()
+    {
+        return Booking::with('room')->latest()->get();
+    }
+
+    // ✅ NEW: DELETE BOOKING (Admin)
+    public function destroy(Booking $booking)
+    {
+        $booking->delete();
+
+        return response()->json([
+            'message' => 'Booking deleted successfully'
+        ]);
+    }
+    
 }

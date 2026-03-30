@@ -23,10 +23,12 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::inertia('admin/dashboard', 'Admin/Dashboard')->name('admin.dashboard');
     Route::inertia('/admin/room-types', 'Admin/RoomTypes/Index')->name('admin.roomtypes.index');
+    Route::inertia('/admin/bookings', 'Admin/Bookings')->name('admin.bookings.index');
 });
 
 Route::get('/booking', function () {
     return Inertia::render('BookingPage');
 });
+
 
 require __DIR__.'/settings.php';
