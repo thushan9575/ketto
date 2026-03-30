@@ -3,8 +3,8 @@ namespace App\Bookings\Io\Http\Controllers;
 
 
 use App\Http\Controllers\Controller;
-use App\Bookings\UseCases\CreateBooking;
-use App\Bookings\UseCases\Request\CreateBookingRequest;
+use App\Bookings\Usecases\CreateBooking;
+use App\Bookings\Usecases\Request\CreateBookingRequest;
 use App\Bookings\Entities\Models\Booking;
 
 class BookingController extends Controller
@@ -42,5 +42,5 @@ class BookingController extends Controller
             'message' => 'Booking deleted successfully'
         ]);
     }
-    
+
 }
