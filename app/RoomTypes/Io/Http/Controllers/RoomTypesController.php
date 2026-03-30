@@ -6,10 +6,10 @@ namespace App\RoomTypes\Io\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\RoomTypes\Entities\Models\RoomType;
 use App\RoomTypes\Usecases\Request\RoomTypeRequest;
-use App\RoomTypes\UseCases\CreateRoomType;
-use App\RoomTypes\UseCases\UpdateRoomType;
-use App\RoomTypes\UseCases\DeleteRoomType;
-use App\RoomTypes\UseCases\ListRoomType;
+use App\RoomTypes\Usecases\CreateRoomType;
+use App\RoomTypes\Usecases\UpdateRoomType;
+use App\RoomTypes\Usecases\DeleteRoomType;
+use App\RoomTypes\Usecases\ListRoomType;
 
 class RoomTypesController extends Controller
 {
