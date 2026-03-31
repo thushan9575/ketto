@@ -1,99 +1,74 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-vue-next';
+import { Link, usePage } from '@inertiajs/vue3'
 
-import AppLogo from '@/components/AppLogo.vue';
-import NavFooter from '@/components/NavFooter.vue';
-import NavMain from '@/components/NavMain.vue';
-import NavUser from '@/components/NavUser.vue';
+import { computed } from 'vue'
 
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider // ✅ IMPORTANT
-} from '@/components/ui/sidebar';
+  SidebarProvider
+} from '@/components/ui/sidebar'
 
-import type { NavItem } from '@/types';
+// Auth user
+const page = usePage()
+const user = computed(() => page.props.auth?.user)
 
-const mainNavItems: NavItem[] = [
-  {
-    title: 'Admin Dashboard',
-    href: '/admin/dashboard',
-    icon: LayoutGrid, 
-  },
-  {
-    title: 'Rooms',
-    href: '/admin/rooms',
-    icon: LayoutGrid, 
-  },
-  {
-    title: 'Room Types',
-    href: '/admin/room-types',
-    icon: LayoutGrid, 
-  },
-  {
-    title: 'bookings',
-    href: '/admin/bookings',
-    icon: LayoutGrid, 
-  },
-];
+// Menu
+const menu = [
+  { title: 'Dashboard', href: '/admin/dashboard' },
+  { title: 'Rooms', href: '/admin/rooms' },
+  { title: 'Room Types', href: '/admin/room-types' },
+  { title: 'Bookings', href: '/admin/bookings' },
+]
 
-const footerNavItems: NavItem[] = [
-  {
-    title: 'Repository',
-    href: 'https://github.com/laravel/vue-starter-kit',
-    icon: FolderGit2,
-  },
-  {
-    title: 'Documentation',
-    href: 'https://laravel.com/docs',
-    icon: BookOpen,
-  },
-];
+// Active check
+const isActive = (href: string) => {
+  return window.location.pathname.startsWith(href)
+}
 </script>
 
 <template>
-  
   <SidebarProvider>
-    <div class="flex min-h-screen">
+    <div class="flex min-h-screen w-full">
 
-      
-      <Sidebar collapsible="icon" variant="inset">
+      <!-- 🔥 CUSTOM BLACK SIDEBAR -->
+      <aside class="w-64 bg-black text-white flex flex-col">
 
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton size="lg" as-child>
-                <Link href="/admin/dashboard">
-                  <AppLogo />
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
+        <!-- LOGO -->
+        <div class="p-4 border-b border-gray-800 flex items-center gap-2">
+          <img src="/images/logo.png" class="w-28" />
+        </div>
 
-        <SidebarContent>
-          <NavMain :items="mainNavItems" />
-        </SidebarContent>
+        <!-- MENU -->
+        <nav class="flex-1 p-4 space-y-2">
 
-        <SidebarFooter>
-          <NavFooter :items="footerNavItems" />
-          <NavUser />
-        </SidebarFooter>
+          <Link
+            v-for="item in menu"
+            :key="item.href"
+            :href="item.href"
+            class="block px-4 py-2 rounded-lg transition"
+            :class="isActive(item.href)
+              ? 'bg-white text-black font-semibold'
+              : 'hover:bg-gray-800'"
+          >
+            {{ item.title }}
+          </Link>
 
-      </Sidebar>
+        </nav>
 
-     
-      <main class="flex-1 bg-gray-100 p-6">
-        <slot />
-      </main>
+        <!-- FOOTER USER -->
+        <div class="p-4 border-t border-gray-800 text-sm text-gray-300">
+          <p class="font-semibold text-white">{{ user?.name }}</p>
+          <p class="text-xs">Admin</p>
+        </div>
+
+      </aside>
+
+      <!-- 🔥 CONTENT -->
+      <div class="flex-1 bg-gray-100 min-w-0">
+        <main class="p-6 w-full">
+          <slot />
+        </main>
+      </div>
 
     </div>
   </SidebarProvider>
 </template>
-
