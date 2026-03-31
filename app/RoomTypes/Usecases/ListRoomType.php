@@ -1,6 +1,6 @@
 <?php
 
-namespace App\RoomTypes\UseCases;
+namespace App\RoomTypes\Usecases;
 
 use App\RoomTypes\Entities\Models\RoomType;
 

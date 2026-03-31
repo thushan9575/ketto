@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
+import SidebarLayout from '@/components/AppSidebar.vue'
+import { usePage, router } from '@inertiajs/vue3'
+
+defineOptions({
+  layout: SidebarLayout,
+})
+
+const page = usePage()
+const user = computed(() => page.props.auth?.user)
 
 const bookings = ref<any[]>([])
 const loading = ref(false)
 
-// Load bookings
 async function fetchBookings() {
   try {
     loading.value = true
@@ -18,67 +26,103 @@ async function fetchBookings() {
   }
 }
 
-// Delete booking
 async function deleteBooking(id: number) {
-  if (!confirm('Are you sure?')) return
+  if (!confirm('Delete this booking?')) return
 
-  try {
-    await axios.delete(`/api/bookings/${id}`)
-    fetchBookings()
-  } catch (err) {
-    console.error(err)
-  }
+  await axios.delete(`/api/bookings/${id}`)
+  fetchBookings()
 }
 
-onMounted(() => {
-  fetchBookings()
-})
+onMounted(fetchBookings)
 </script>
 
 <template>
-  <div class="p-6">
-    <h1 class="text-2xl font-bold mb-6">Booking Dashboard</h1>
+  <div class="w-full">
 
-    <div v-if="loading">Loading...</div>
+    <div class="bg-black text-white p-4 rounded-xl mb-8 shadow">
+      <div class="flex justify-between items-center">
 
-    <div v-else class="bg-white shadow rounded p-4">
-      <table class="min-w-full border text-sm">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="p-2">ID</th>
-            <th class="p-2">Name</th>
-            <th class="p-2">Email</th>
-            <th class="p-2">Room</th>
-            <th class="p-2">Arrival</th>
-            <th class="p-2">Departure</th>
-            <th class="p-2">Action</th>
-          </tr>
-        </thead>
+        <div class="flex items-center gap-3">
+          <img src="/images/logo.png" class="w-28" />
+          <div>
+            <h1 class="text-xl font-bold">Bookings</h1>
+            <p class="text-gray-300 text-xs">
+              Manage all hotel bookings
+            </p>
+          </div>
+        </div>
 
-        <tbody>
-          <tr v-for="b in bookings" :key="b.id" class="border-b">
-            <td class="p-2">{{ b.id }}</td>
-            <td class="p-2">{{ b.name }}</td>
-            <td class="p-2">{{ b.email }}</td>
-            <td class="p-2">{{ b.room?.room_title }}</td>
-            <td class="p-2">{{ b.arrival }}</td>
-            <td class="p-2">{{ b.departure }}</td>
+        <button
+          @click="router.visit('/admin/dashboard')"
+          class="px-4 py-2 border border-white rounded hover:bg-white hover:text-black"
+        >
+          Dashboard
+        </button>
 
-            <td class="p-2">
-              <button
-                @click="deleteBooking(b.id)"
-                class="bg-red-500 text-white px-3 py-1 rounded"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div v-if="bookings.length === 0" class="text-center p-4">
-        No bookings found
       </div>
     </div>
+
+    <div class="bg-white p-6 rounded-xl shadow">
+
+      <h2 class="text-xl font-semibold mb-4 text-gray-700">
+        Bookings List
+      </h2>
+
+      <div v-if="loading" class="text-center text-gray-500 py-6">
+        Loading bookings...
+      </div>
+
+      <div v-else class="overflow-x-auto">
+
+        <table class="min-w-full text-sm">
+
+          <thead>
+            <tr class="bg-gray-100 text-left">
+              <th class="p-3">ID</th>
+              <th class="p-3">Name</th>
+              <th class="p-3">Email</th>
+              <th class="p-3">Room</th>
+              <th class="p-3">Arrival</th>
+              <th class="p-3">Departure</th>
+              <th class="p-3 text-center">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              v-for="b in bookings"
+              :key="b.id"
+              class="border-b hover:bg-gray-50"
+            >
+              <td class="p-3">{{ b.id }}</td>
+              <td class="p-3 font-medium">{{ b.name }}</td>
+              <td class="p-3">{{ b.email }}</td>
+              <td class="p-3">{{ b.room?.room_title || 'N/A' }}</td>
+              <td class="p-3">{{ b.arrival }}</td>
+              <td class="p-3">{{ b.departure }}</td>
+
+              <td class="p-3 flex justify-center">
+                <button
+                  @click="deleteBooking(b.id)"
+                  class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+
+            <tr v-if="bookings.length === 0">
+              <td colspan="7" class="text-center p-6 text-gray-400">
+                No bookings found
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
   </div>
 </template>

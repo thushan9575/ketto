@@ -2,11 +2,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
 
-// ✅ Page props
 const page = usePage()
 const auth_user = page.props.auth?.user || null
 
-// Loading and banner
 const loading = ref(true)
 const currentBanner = ref(0)
 const banners = ref([
@@ -15,14 +13,12 @@ const banners = ref([
   '/images/banner3.jpg'
 ])
 
-// Rooms
 const rooms = ref([
   { id: 1, name: 'Luxury Bedroom', desc: 'Modern luxury room with sea view', image: '/images/room1.jpg' },
   { id: 2, name: 'Family Room', desc: 'Perfect room for family stay', image: '/images/room2.jpg' },
   { id: 3, name: 'Deluxe Suite', desc: 'Premium suite with luxury design', image: '/images/room3.jpg' }
 ])
 
-// Gallery
 const gallery = ref([
   '/images/gallery1.jpg',
   '/images/gallery2.jpg',
@@ -30,22 +26,17 @@ const gallery = ref([
   '/images/gallery4.jpg'
 ])
 
-// Booking
 const arrival = ref('')
 const departure = ref('')
 
-// Contact
 const contact = ref({ name: '', email: '', phone: '', message: '' })
 
-// Computed user
 const authUser = computed(() => auth_user)
 
-// Logout
 const logout = () => {
     router.post('/logout')
 }
 
-// Banner rotation
 const nextBanner = () => {
   currentBanner.value++
   if (currentBanner.value >= banners.value.length) currentBanner.value = 0
@@ -56,20 +47,17 @@ onMounted(() => {
   setInterval(nextBanner, 4000)
 })
 
-// Methods
 const bookRoom = () => alert('Room booked!')
 const sendMessage = () => alert('Message sent!')
 </script>
 
 <template>
   <div>
-    <!-- LOADER -->
     <div v-if="loading" class="text-center p-10">
       <img src="/images/loading.gif" width="80" />
     </div>
 
     <div v-else>
-      <!-- HEADER -->
       <header class="bg-black text-white p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
           <img src="/images/logo.png" width="120" />
@@ -82,13 +70,11 @@ const sendMessage = () => alert('Message sent!')
             <a href="#" class="text-white">Blog</a>
             <a href="#" class="text-white">Contact</a>
 
-            <!-- Guest -->
             <template v-if="!authUser">
               <Link href="/login" class="px-4 py-2 border border-white rounded">Login</Link>
               <Link href="/register" class="px-4 py-2 bg-white text-black rounded">Register</Link>
             </template>
 
-            <!-- Authenticated User -->
             <template v-else>
               <button @click="logout" class="px-4 py-2 border border-white rounded bg-transparent">
                 Logout
@@ -98,12 +84,10 @@ const sendMessage = () => alert('Message sent!')
         </div>
       </header>
 
-      <!-- BANNER -->
       <section>
         <img :src="banners[currentBanner]" class="w-full h-[500px] object-cover" />
       </section>
 
-      <!-- BOOKING -->
       <section class="py-16 bg-gray-100 text-center">
         <h2 class="text-3xl mb-6">Book a Room Online</h2>
         <form @submit.prevent="bookRoom" class="flex flex-wrap justify-center gap-4">
@@ -113,7 +97,6 @@ const sendMessage = () => alert('Message sent!')
         </form>
       </section>
 
-      <!-- ABOUT -->
       <section class="py-16 max-w-6xl mx-auto flex flex-wrap gap-8 items-center">
         <div class="flex-1">
           <h2 class="text-2xl font-semibold">About Us</h2>
@@ -127,7 +110,6 @@ const sendMessage = () => alert('Message sent!')
         </div>
       </section>
 
-      <!-- ROOMS -->
       <section class="py-16 bg-gray-50">
         <div class="max-w-6xl mx-auto">
           <h2 class="text-center text-3xl mb-10">Ou Rooms</h2>
@@ -143,7 +125,6 @@ const sendMessage = () => alert('Message sent!')
         </div>
       </section>
 
-      <!-- GALLERY -->
       <section class="py-16 max-w-6xl mx-auto">
         <h2 class="text-center text-3xl mb-10">Gallery</h2>
         <div class="flex flex-wrap gap-4 justify-center">
@@ -151,7 +132,6 @@ const sendMessage = () => alert('Message sent!')
         </div>
       </section>
 
-      <!-- CONTACT -->
       <section class="py-16 bg-gray-100">
         <div class="max-w-md mx-auto text-center">
           <h2 class="text-2xl mb-6">Contact Us</h2>
@@ -165,7 +145,6 @@ const sendMessage = () => alert('Message sent!')
         </div>
       </section>
 
-      <!-- FOOTER -->
       <footer class="bg-black text-white p-6 text-center">
         <p>© 2026 Keto Hotel</p>
       </footer>

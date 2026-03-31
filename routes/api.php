@@ -26,3 +26,4 @@ Route::get('/rooms/{room}/booked-dates', [BookingController::class, 'bookedDates
 // ✅ NEW (Admin)
 Route::get('/bookings', [BookingController::class, 'index']);
 Route::delete('/bookings/{booking}', [BookingController::class, 'destroy']);
+Route::get('/admin/stats', [BookingController::class, 'stats']);
